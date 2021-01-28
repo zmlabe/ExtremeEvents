@@ -2,7 +2,7 @@
 Script plots boxplots
 
 Author    : Zachary M. Labe
-Date      : 20 January 2021
+Date      : 26 January 2021
 """
 
 ### Import modules
@@ -18,8 +18,8 @@ from sklearn.metrics import accuracy_score
 ### Set preliminaries
 directoryfigure = '/Users/zlabe/Desktop/ExtremeEvents_NewANN_v1/LENS/'
 directorydata = '/Users/zlabe/Documents/Research/ExtremeEvents/Data/'
-reg_name = 'Globe'
-dataset = 'lens'
+reg_name = 'MPIGlobe'
+dataset = 'MPI'
 dataset_obs = '20CRv3'
 rm_ensemble_mean = True
 variq = ['T2M']
@@ -33,23 +33,23 @@ ensnum = 40
 iterations = 100
 
 ### Read in century data
-trainacc = np.genfromtxt(directorydata + 'train_totalaccuracy_ClassCentury_ANNv2_%s.txt' % dataset,
+trainacc = np.genfromtxt(directorydata + 'train_totalaccuracy_ClassCentury_ANNv3_%s.txt' % dataset,
               unpack=True).transpose()
-trainper = np.genfromtxt(directorydata + 'train_periodaccuracy_ClassCentury_ANNv2_%s.txt' % dataset,
+trainper = np.genfromtxt(directorydata + 'train_periodaccuracy_ClassCentury_ANNv3_%s.txt' % dataset,
               unpack=True).transpose()
-testacc = np.genfromtxt(directorydata + 'test_totalaccuracy_ClassCentury_ANNv2_%s.txt' % dataset,
+testacc = np.genfromtxt(directorydata + 'test_totalaccuracy_ClassCentury_ANNv3_%s.txt' % dataset,
               unpack=True).transpose()
-testper = np.genfromtxt(directorydata + 'test_periodaccuracy_ClassCentury_ANNv2_%s.txt' % dataset,
+testper = np.genfromtxt(directorydata + 'test_periodaccuracy_ClassCentury_ANNv3_%s.txt' % dataset,
               unpack=True).transpose()
 
 # ### Read in multi-decade data
-# dectrainacc = np.genfromtxt(directorydata + 'train_totalaccuracy_ClassMultiDecade_ANNv2_%s.txt' % dataset,
+# dectrainacc = np.genfromtxt(directorydata + 'train_totalaccuracy_ClassMultiDecade_ANNv3_%s.txt' % dataset,
 #               unpack=True).transpose()
-# dectrainper = np.genfromtxt(directorydata + 'train_periodaccuracy_ClassMultiDecade_ANNv2_%s.txt' % dataset,
+# dectrainper = np.genfromtxt(directorydata + 'train_periodaccuracy_ClassMultiDecade_ANNv3_%s.txt' % dataset,
 #               unpack=True).transpose()
-# dectestacc = np.genfromtxt(directorydata + 'test_totalaccuracy_ClassMultiDecade_ANNv2_%s.txt' % dataset,
+# dectestacc = np.genfromtxt(directorydata + 'test_totalaccuracy_ClassMultiDecade_ANNv3_%s.txt' % dataset,
 #               unpack=True).transpose()
-# dectestper = np.genfromtxt(directorydata + 'test_periodaccuracy_ClassMultiDecade_ANNv2_%s.txt' % dataset,
+# dectestper = np.genfromtxt(directorydata + 'test_periodaccuracy_ClassMultiDecade_ANNv3_%s.txt' % dataset,
 #               unpack=True).transpose()
 
 ###############################################################################
@@ -109,10 +109,10 @@ plt.text(0.,0.01,r'\textbf{1920-2009}',fontsize=10,color='dimgrey',
 plt.text(1.,0.01,r'\textbf{2010-2099}',fontsize=10,color='dimgrey',
          ha='right',va='center')
 
-plt.savefig(directoryfigure + 'ClassCentury_Accuracy_BoxPlots_ANNv2_%s.png' % dataset,
+plt.savefig(directoryfigure + 'ClassCentury_Accuracy_PointPlots_ANNv3_%s.png' % dataset,
             dpi=300)
 
-###############################################################################  
+# ###############################################################################  
 
 # fig = plt.figure()
 # ax = plt.subplot(111)
@@ -131,9 +131,9 @@ plt.savefig(directoryfigure + 'ClassCentury_Accuracy_BoxPlots_ANNv2_%s.png' % da
 
 # pos = [0,1,2]
 # plt.plot(pos,dectrainper,c='deepskyblue', label=r'\textbf{Training}',
-#          marker='o',markersize=10)
+#           marker='o',markersize=10)
 # plt.plot(pos,dectestper,c='indianred', label=r'\textbf{Testing}',
-#          marker='o',markersize=10)
+#           marker='o',markersize=10)
 
 # l = plt.legend(shadow=False,fontsize=7,loc='upper center',
 #             fancybox=True,frameon=False,ncol=2,bbox_to_anchor=(0.5,1.1),
@@ -151,5 +151,5 @@ plt.savefig(directoryfigure + 'ClassCentury_Accuracy_BoxPlots_ANNv2_%s.png' % da
 # plt.text(2.,0.01,r'\textbf{2040-2099}',fontsize=10,color='dimgrey',
 #           ha='right',va='center')
 
-# plt.savefig(directoryfigure + 'ClassMultiDecade_Accuracy_BoxPlots_ANNv2_%s.png' % dataset,
+# plt.savefig(directoryfigure + 'ClassMultiDecade_Accuracy_BPointPlots_ANNv3_%s.png' % dataset,
 #             dpi=300)

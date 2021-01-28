@@ -58,7 +58,7 @@ directorydataEE = '/Users/zlabe/Data/ERA5/'
 directoryoutput = '/Users/zlabe/Documents/Research/ExtremeEvents/Data/'
 datasetsingle = ['lens']
 seasons = ['annual']
-# seasons = ['annual','JFM','AMJ','JAS','OND']
+seasons = ['annual','JFM','AMJ','JAS','OND']
 window = 5
 
 if datasetsingle[0] == 'lens':

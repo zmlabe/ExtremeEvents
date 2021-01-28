@@ -18,8 +18,8 @@ from sklearn.metrics import accuracy_score
 ### Set preliminaries
 directoryfigure = '/Users/zlabe/Desktop/ExtremeEvents_NewANN_v1/LENS/'
 directorydata = '/Users/zlabe/Documents/Research/ExtremeEvents/Data/'
-reg_name = 'Globe'
-dataset = 'lens'
+reg_name = 'MPIGlobe'
+dataset = 'MPI'
 dataset_obs = '20CRv3'
 rm_ensemble_mean = True
 variq = ['T2M']
@@ -49,9 +49,9 @@ elif num_of_class == 2:
     classesl = np.concatenate([array1,array2],axis=None)
     
 ### Read in data
-trainq = np.genfromtxt(directorydata + 'training_Century_%s_%s_%s_%s_iterations%s_v2.txt' % (variq[0],seasons[0],reg_name,dataset,iterations))
-testq = np.genfromtxt(directorydata + 'testing_Century_%s_%s_%s_%s_iterations%s_v2.txt' % (variq[0],seasons[0],reg_name,dataset,iterations))
-obsq = np.genfromtxt(directorydata + 'obsout_Century_%s_%s_%s_%s-%s_iterations%s_v2.txt' % (variq[0],seasons[0],reg_name,dataset_obs,dataset,iterations))
+trainq = np.genfromtxt(directorydata + 'training_Century_%s_%s_%s_%s_iterations%s_v3.txt' % (variq[0],seasons[0],reg_name,dataset,iterations))
+testq = np.genfromtxt(directorydata + 'testing_Century_%s_%s_%s_%s_iterations%s_v3.txt' % (variq[0],seasons[0],reg_name,dataset,iterations))
+obsq = np.genfromtxt(directorydata + 'obsout_Century_%s_%s_%s_%s-%s_iterations%s_v3.txt' % (variq[0],seasons[0],reg_name,dataset_obs,dataset,iterations))
 
 ### Reshape
 train = np.reshape(trainq,(trainq.shape[0]//yearlabels.shape[0],yearlabels.shape[0],trainq.shape[1]))
@@ -117,11 +117,11 @@ periodtrain = accuracyTPeriodTime(indextrain,classesl)
 periodtest = accuracyTPeriodTime(indextest,classesl)
 
 ### Save statistics
-np.savetxt(directorydata + 'train_totalaccuracy_ClassCentury_ANNv2_%s.txt' % dataset,
+np.savetxt(directorydata + 'train_totalaccuracy_ClassCentury_ANNv3_%s.txt' % dataset,
             np.array([acctrain]))
-np.savetxt(directorydata + 'test_totalaccuracy_ClassCentury_ANNv2_%s.txt' % dataset,
+np.savetxt(directorydata + 'test_totalaccuracy_ClassCentury_ANNv3_%s.txt' % dataset,
             np.array([acctest]))
-np.savetxt(directorydata + 'train_periodaccuracy_ClassCentury_ANNv2_%s.txt' % dataset,
+np.savetxt(directorydata + 'train_periodaccuracy_ClassCentury_ANNv3_%s.txt' % dataset,
             periodtrain)
-np.savetxt(directorydata + 'test_periodaccuracy_ClassCentury_ANNv2_%s.txt' % dataset,
+np.savetxt(directorydata + 'test_periodaccuracy_ClassCentury_ANNv3_%s.txt' % dataset,
             periodtest)

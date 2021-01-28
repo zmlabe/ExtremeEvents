@@ -102,8 +102,8 @@ def read_SMILE(directory,simulation,vari,sliceperiod,slicebase,sliceshape,addcli
         time = np.arange(1850,2099+1,1)
         timeslice = '%s-%s' % (time.min(),time.max())
         mon = 12
-        allens = np.arange(1,100+1,1)
-        # allens = np.arange(1,40+1,1)
+        # allens = np.arange(1,100+1,1)
+        allens = np.arange(1,40+1,1)
         ens = allens
     else:
         ValueError('WRONG SMILE SELECTED!')

@@ -21,10 +21,10 @@ from sklearn.metrics import accuracy_score
 from netCDF4 import Dataset
 
 ### Set preliminaries
-directoryfigure = '/Users/zlabe/Desktop/ExtremeEvents_NewANN_v1/MPI/'
+directoryfigure = '/Users/zlabe/Desktop/ExtremeEvents_NewANN_v1/LENS/'
 directorydata = '/Users/zlabe/Documents/Research/ExtremeEvents/Data/'
-reg_name = 'MPIGlobe'
-dataset = 'MPI'
+reg_name = 'Globe'
+dataset = 'LENS'
 dataset_obs = '20CRv3'
 rm_ensemble_mean = True
 variq = ['T2M']
@@ -58,9 +58,9 @@ elif num_of_class == 2:
     classesl = np.concatenate([array1,array2],axis=None)
     
 ### Read in prediction data
-trainq = np.genfromtxt(directorydata + 'training_Century_%s_%s_%s_%s_iterations%s_v2.txt' % (variq[0],seasons[0],reg_name,dataset,iterations))
-testq = np.genfromtxt(directorydata + 'testing_Century_%s_%s_%s_%s_iterations%s_v2.txt' % (variq[0],seasons[0],reg_name,dataset,iterations))
-obsq = np.genfromtxt(directorydata + 'obsout_Century_%s_%s_%s_%s-%s_iterations%s_v2.txt' % (variq[0],seasons[0],reg_name,dataset_obs,dataset,iterations))
+trainq = np.genfromtxt(directorydata + 'training_Century_%s_%s_%s_%s_iterations%s_v3.txt' % (variq[0],seasons[0],reg_name,dataset,iterations))
+testq = np.genfromtxt(directorydata + 'testing_Century_%s_%s_%s_%s_iterations%s_v3.txt' % (variq[0],seasons[0],reg_name,dataset,iterations))
+obsq = np.genfromtxt(directorydata + 'obsout_Century_%s_%s_%s_%s-%s_iterations%s_v3.txt' % (variq[0],seasons[0],reg_name,dataset_obs,dataset,iterations))
     
 ### Reshape
 train = np.reshape(trainq,(trainq.shape[0]//yearlabels.shape[0],yearlabels.shape[0],trainq.shape[1]))
@@ -68,14 +68,14 @@ test = np.reshape(testq,(testq.shape[0]//yearlabels.shape[0],yearlabels.shape[0]
 obs = obsq
 
 ### Read in LRP training data
-data1 = Dataset(directorydata + 'LRP_Maps_train_AnnualT2M_MPI.nc')
+data1 = Dataset(directorydata + 'LRP_Maps_train_AnnualT2M_LENS.nc')
 lat1 = data1.variables['lat'][:]
 lon1 = data1.variables['lon'][:]
 lrptrain = data1.variables['LRP'][:].reshape(train.shape[0],yearlabels.shape[0],lat1.shape[0]*lon1.shape[0])
 data1.close()
 
 ### Read in LRP testing data
-data2 = Dataset(directorydata + 'LRP_Maps_test_AnnualT2M_MPI.nc')
+data2 = Dataset(directorydata + 'LRP_Maps_test_AnnualT2M_LENS.nc')
 lrptest = data2.variables['LRP'][:].reshape(test.shape[0],yearlabels.shape[0],lat1.shape[0]*lon1.shape[0])
 data2.close()
 
@@ -268,7 +268,7 @@ cbar2.outline.set_edgecolor('dimgrey')
 plt.tight_layout()
 plt.subplots_adjust(top=0.85,wspace=0.02,hspace=0.02,bottom=0.14)
 
-plt.savefig(directoryfigure + 'training_differenceLRP_composites_MPI.png',dpi=300)
+plt.savefig(directoryfigure + 'training_differenceLRP_composites_LENS.png',dpi=300)
 
 #######################################################################
 #######################################################################
@@ -352,4 +352,4 @@ cbar2.outline.set_edgecolor('dimgrey')
 plt.tight_layout()
 plt.subplots_adjust(top=0.85,wspace=0.02,hspace=0.02,bottom=0.14)
 
-plt.savefig(directoryfigure + 'testing_differenceLRP_composites_MPI.png',dpi=300)
+plt.savefig(directoryfigure + 'testing_differenceLRP_composites_LENS.png',dpi=300)
