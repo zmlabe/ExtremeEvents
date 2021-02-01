@@ -18,8 +18,8 @@ from sklearn.metrics import accuracy_score
 ### Set preliminaries
 directoryfigure = '/Users/zlabe/Desktop/ExtremeEvents_NewANN_v1/LENS/'
 directorydata = '/Users/zlabe/Documents/Research/ExtremeEvents/Data/'
-reg_name = 'MPIGlobe'
-dataset = 'MPI'
+reg_name = 'narrowTropics'
+dataset = 'LENS'
 dataset_obs = '20CRv3'
 rm_ensemble_mean = True
 variq = ['T2M']
@@ -117,11 +117,11 @@ periodtrain = accuracyTPeriodTime(indextrain,classesl)
 periodtest = accuracyTPeriodTime(indextest,classesl)
 
 ### Save statistics
-np.savetxt(directorydata + 'train_totalaccuracy_ClassCentury_ANNv3_%s.txt' % dataset,
+np.savetxt(directorydata + 'train_totalaccuracy_ClassCentury_ANNv3_%s_%s.txt' % (dataset,reg_name),
             np.array([acctrain]))
-np.savetxt(directorydata + 'test_totalaccuracy_ClassCentury_ANNv3_%s.txt' % dataset,
+np.savetxt(directorydata + 'test_totalaccuracy_ClassCentury_ANNv3_%s_%s.txt' % (dataset,reg_name),
             np.array([acctest]))
-np.savetxt(directorydata + 'train_periodaccuracy_ClassCentury_ANNv3_%s.txt' % dataset,
+np.savetxt(directorydata + 'train_periodaccuracy_ClassCentury_ANNv3_%s_%s.txt' % (dataset,reg_name),
             periodtrain)
-np.savetxt(directorydata + 'test_periodaccuracy_ClassCentury_ANNv3_%s.txt' % dataset,
+np.savetxt(directorydata + 'test_periodaccuracy_ClassCentury_ANNv3_%s_%s.txt' % (dataset,reg_name),
             periodtest)

@@ -30,12 +30,13 @@ rm_merid_mean = False
 rm_annual_mean = False
 rm_ensemble_mean = True
 ensnum = 40
-num_of_class = 2
+num_of_class = 3
 iterations = 100
 
 ### Create sample class labels for 1920-2099
 if num_of_class == 3:
     yearlabels = np.arange(1920,2099+1,1)
+    years = np.arange(1920,2099+1,1)
     lengthlabels = yearlabels.shape[0]//num_of_class
     array1 = np.asarray([0]*lengthlabels)
     array2 = np.asarray([1]*lengthlabels)
@@ -49,14 +50,14 @@ elif num_of_class == 2:
     classesl = np.concatenate([array1,array2],axis=None)
     
 ### Read in data
-trainq = np.genfromtxt(directorydata + 'training_Century_%s_%s_%s_%s_iterations%s_v3.txt' % (variq[0],seasons[0],reg_name,dataset,iterations))
-testq = np.genfromtxt(directorydata + 'testing_Century_%s_%s_%s_%s_iterations%s_v3.txt' % (variq[0],seasons[0],reg_name,dataset,iterations))
-obsq = np.genfromtxt(directorydata + 'obsout_Century_%s_%s_%s_%s-%s_iterations%s_v3.txt' % (variq[0],seasons[0],reg_name,dataset_obs,dataset,iterations))
+trainq = np.genfromtxt(directorydata + 'training_%s_%s_%s_%s_iterations%s_v3.txt' % (variq[0],seasons[0],reg_name,dataset,iterations))
+testq = np.genfromtxt(directorydata + 'testing_%s_%s_%s_%s_iterations%s_v3.txt' % (variq[0],seasons[0],reg_name,dataset,iterations))
+# obsq = np.genfromtxt(directorydata + 'obsout_%s_%s_%s_%s_iterations%s_v3.txt' % (variq[0],seasons[0],reg_name,dataset_obs,iterations))
 
 ### Reshape
 train = np.reshape(trainq,(trainq.shape[0]//yearlabels.shape[0],yearlabels.shape[0],trainq.shape[1]))
 test = np.reshape(testq,(testq.shape[0]//yearlabels.shape[0],yearlabels.shape[0],testq.shape[1]))
-obs = obsq
+# obs = obsq
 
 ### Combination of data
 total = np.append(train,test,axis=0)
@@ -93,9 +94,9 @@ def accuracyTPeriodTime(data_pred,data_true):
     Compute accuracy for the three periods
     """
     time = data_true.shape[0]
-    period = int(time//2)
+    period = int(time//3)
     
-    accdata_pred = np.empty((data_pred.shape[0],2))
+    accdata_pred = np.empty((data_pred.shape[0],3))
     for i in range(data_pred.shape[0]):
         for save,j in enumerate(range(0,time,period)):
             accdata_pred[i,save] = accuracy_score(data_true[j:j+period],
@@ -109,15 +110,14 @@ indextest,meanindextest = truelabel(test)
 
 acctrain = accuracyTotalTime(indextrain,classesl)
 acctest = accuracyTotalTime(indextest,classesl)
+np.savetxt(directorydata + 'train_totalaccuracy_alldata_ClassMultiDecade_ANNv3_%s.txt' % dataset,
+           acctrain)
+np.savetxt(directorydata + 'test_totalaccuracy_alldata_ClassMultiDecade_ANNv3_%s.txt' % dataset,
+           acctest)
 
 periodtrain = accuracyTPeriodTime(indextrain,classesl)
 periodtest = accuracyTPeriodTime(indextest,classesl)
-
-np.savetxt(directorydata + 'train_totalaccuracy_alldata_ClassCentury_ANNv3_%s.txt' % dataset,
-            np.array([acctrain]))
-np.savetxt(directorydata + 'test_totalaccuracy_alldata_ClassCentury_ANNv3_%s.txt' % dataset,
-            np.array([acctest]))
-np.savetxt(directorydata + 'train_periodaccuracy_alldata_ClassCentury_ANNv3_%s.txt' % dataset,
-            periodtrain)
-np.savetxt(directorydata + 'test_periodaccuracy_alldata_ClassCentury_ANNv3_%s.txt' % dataset,
-            periodtest)
+np.savetxt(directorydata + 'train_periodaccuracy_alldata_ClassMultiDecade_ANNv3_%s.txt' % dataset,
+           periodtrain)
+np.savetxt(directorydata + 'test_periodaccuracy_alldata_ClassMultiDecade_ANNv3_%s.txt' % dataset,
+           periodtest)

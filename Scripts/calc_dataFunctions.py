@@ -172,7 +172,16 @@ def getRegion(data,lat1,lon1,lat_bounds,lon_bounds):
     lat1 = np.round(lat1,3)
     
     ### Mask latitudes
-    if data.ndim == 3:
+    if data.ndim == 2:
+        latq = np.where((lat1 >= lat_bounds[0]) & (lat1 <= lat_bounds[1]))[0]
+        latn = lat1[latq]
+        datalatq = data[latq,:] 
+        ### Mask longitudes
+        lonq = np.where((lon1 >= lon_bounds[0]) & (lon1 <= lon_bounds[1]))[0]
+        lonn = lon1[lonq]
+        datalonq = datalatq[:,lonq]
+        
+    elif data.ndim == 3:
         latq = np.where((lat1 >= lat_bounds[0]) & (lat1 <= lat_bounds[1]))[0]
         latn = lat1[latq]
         datalatq = data[:,latq,:] 

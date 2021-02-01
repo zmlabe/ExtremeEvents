@@ -935,6 +935,9 @@ def regions(name):
     elif name == 'GlobeNoPoles':
         lat_bounds = (-66.,66.)
         lon_bounds = (0., 360.)
+    elif name == 'noPolarOceans':
+        lat_bounds = (-53.,66.)
+        lon_bounds = (0., 360.)
     elif name == 'NH':
         lat_bounds = (0.,90.)
         lon_bounds = (0., 360.)

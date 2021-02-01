@@ -58,38 +58,42 @@ directorydataEE = '/Users/zlabe/Data/ERA5/'
 directoryoutput = '/Users/zlabe/Documents/Research/ExtremeEvents/Data/'
 datasetsingle = ['lens']
 seasons = ['annual']
-land_only = False
+land_only = True
 ocean_only = False
 rm_merid_mean = False
 rm_annual_mean = False
 rm_ensemble_mean = True
+rm_standard_dev = True
 ensnum = 40
 num_of_class = 2
+window = 5
+variq = 'T2M'
+reg_name = 'Globe'
 
 if datasetsingle[0] == 'lens':
     simuqq = 'LENS'
-    timelens = np.arange(1920,2099+1,1)
+    timelens = np.arange(1920+window,2099+1,1)
     yearsall = [timelens]
     directoriesall = [directorydataLLL]
 elif datasetsingle[0] == 'MPI':
     simuqq = datasetsingle[0]
-    timempi = np.arange(1920,2099+1,1)
+    timempi = np.arange(1920+window,2099+1,1)
     yearsall = [timempi]
     directoriesall = [directorydataENS]
     
 ### Create sample class labels for 1920-2099
 if num_of_class == 3:
-    yearlabels = np.arange(1920,2099+1,1)
+    yearlabels = np.arange(1920+window,2099+1,1)
     lengthlabels = yearlabels.shape[0]//num_of_class
     array1 = np.asarray([0]*lengthlabels)
     array2 = np.asarray([1]*lengthlabels)
     array3 = np.asarray([2]*lengthlabels)
     classesl = np.concatenate([array1,array2,array3],axis=None)
 elif num_of_class == 2:
-    yearlabels = np.arange(1920,2099+1,1)
+    yearlabels = np.arange(1920+window,2099+1,1)
     lengthlabels = yearlabels.shape[0]//num_of_class
     array1 = np.asarray([0]*lengthlabels)
-    array2 = np.asarray([1]*lengthlabels)
+    array2 = np.asarray([1]*(yearlabels.shape[0]-lengthlabels))
     classesl = np.concatenate([array1,array2],axis=None)
     
 ### Begin ANN and the entire script
@@ -100,14 +104,12 @@ for sis,singlesimulation in enumerate(datasetsingle):
         ###############################################################################
         ###############################################################################
         ### ANN preliminaries
-        variq = 'T2M'
         monthlychoice = seasons[seas]
-        reg_name = 'narrowTropics'
         if reg_name == 'Globe':
             if datasetsingle[0] == 'MPI':
                 reg_name = 'MPIGlobe'
         lat_bounds,lon_bounds = UT.regions(reg_name)
-        directoryfigure = '/Users/zlabe/Desktop/ExtremeEvents_v1/%s/' % simuqq
+        directoryfigure = '/Users/zlabe/Desktop/ExtremeEvents_v2_STD-RMENS/CLASS/%s/' % simuqq
         experiment_result = pd.DataFrame(columns=['actual iters','hiddens','cascade',
                                                   'RMSE Train','RMSE Test',
                                                   'ridge penalty','zero mean',
@@ -133,11 +135,11 @@ for sis,singlesimulation in enumerate(datasetsingle):
         
         ### Remove the annual mean? True to subtract it from dataset ##########
         if rm_annual_mean == True:
-            directoryfigure = '/Users/zlabe/Desktop/ExtremeEvents_v1/%s/' % simuqq
+            directoryfigure = '/Users/zlabe/Desktop/ExtremeEvents_v2_STD-RMENS/CLASS/%s/' % simuqq
         
         ### Rove the ensemble mean? True to subtract it from dataset ##########
         if rm_ensemble_mean == True:
-            directoryfigure = '/Users/zlabe/Desktop/ExtremeEvents_v1/%s/' % simuqq
+            directoryfigure = '/Users/zlabe/Desktop/ExtremeEvents_v2_STD-RMENS/CLASS/%s/' % simuqq
         
         ### Split the data into training and testing sets? value of 1 will use all 
         ### data as training, .8 will use 80% training, 20% testing; etc.
@@ -514,8 +516,18 @@ for sis,singlesimulation in enumerate(datasetsingle):
                         print('*Removed annual mean*')
                         
                     if rm_ensemble_mean == True:
-                        data = dSS.remove_ensemble_mean(data)
+                        datae = dSS.remove_ensemble_mean(data)
                         print('*Removed ensemble mean*')
+                        
+                    if rm_standard_dev == True:
+                        data = dSS.rm_standard_dev(datae,window)
+                        print('*Removed standard deviation*')
+        
+                    if land_only == True:
+                        data, data_obs = dSS.remove_ocean(data,data_obs,lat_bounds,lon_bounds) 
+
+                    if ocean_only == True:
+                        data, data_obs = dSS.remove_land(data,data_obs,lat_bounds,lon_bounds) 
         
                 #     ### Loop over folds
                     for loop in np.arange(0,foldsN): 
@@ -616,9 +628,9 @@ for sis,singlesimulation in enumerate(datasetsingle):
         obsout = np.reshape(YpredObs,(year_obsall.shape[0],num_of_class))
         
         # ## Save the output for plotting
-        np.savetxt(directoryoutput + 'training_Century_%s_%s_%s_%s_iterations%s_v3.txt' % (variq,monthlychoice,reg_name,dataset,iterations[0]),YpredTrain)
-        np.savetxt(directoryoutput + 'testing_Century_%s_%s_%s_%s_iterations%s_v3.txt' % (variq,monthlychoice,reg_name,dataset,iterations[0]),YpredTest)
-        np.savetxt(directoryoutput + 'obsout_Century_%s_%s_%s_%s-%s_iterations%s_v3.txt' % (variq,monthlychoice,reg_name,dataset_obs,dataset,iterations[0]),YpredObs)
+        np.savetxt(directoryoutput + 'training_STDDEVCentury_%s_%s_%s_%s_iterations%s_v1.txt' % (variq,monthlychoice,reg_name,dataset,iterations[0]),YpredTrain)
+        np.savetxt(directoryoutput + 'testing_STDDEVCentury_%s_%s_%s_%s_iterations%s_v1.txt' % (variq,monthlychoice,reg_name,dataset,iterations[0]),YpredTest)
+        np.savetxt(directoryoutput + 'obsout_STDDEVCentury_%s_%s_%s_%s-%s_iterations%s_v1.txt' % (variq,monthlychoice,reg_name,dataset_obs,dataset,iterations[0]),YpredObs)
     
         ### See more more details
         model.layers[0].get_config()
@@ -675,7 +687,7 @@ for sis,singlesimulation in enumerate(datasetsingle):
                                                                                            
         analyzer_output = analyzer10.analyze(XobsS)
         analyzer_output = analyzer_output/np.nansum(analyzer_output,axis=1)[:,np.newaxis]  
-        lrpobservations = np.reshape(analyzer_output,(96,lats.shape[0],lons.shape[0]))
+        lrpobservations = np.reshape(analyzer_output,(96-window,lats.shape[0],lons.shape[0]))
            
         numLats = lats.shape[0]
         numLons = lons.shape[0]   

@@ -18,8 +18,8 @@ from sklearn.metrics import accuracy_score
 ### Set preliminaries
 directoryfigure = '/Users/zlabe/Desktop/ExtremeEvents_NewANN_v1/LENS/'
 directorydata = '/Users/zlabe/Documents/Research/ExtremeEvents/Data/'
-reg_name = 'MPIGlobe'
-dataset = 'MPI'
+reg_name = 'narrowTropics'
+dataset = 'LENS'
 dataset_obs = '20CRv3'
 rm_ensemble_mean = True
 variq = ['T2M']
@@ -33,13 +33,13 @@ ensnum = 40
 iterations = 100
 
 ### Read in century data
-trainacc = np.genfromtxt(directorydata + 'train_totalaccuracy_ClassCentury_ANNv3_%s.txt' % dataset,
+trainacc = np.genfromtxt(directorydata + 'train_totalaccuracy_ClassCentury_ANNv3_%s_%s.txt' % (dataset,reg_name),
               unpack=True).transpose()
-trainper = np.genfromtxt(directorydata + 'train_periodaccuracy_ClassCentury_ANNv3_%s.txt' % dataset,
+trainper = np.genfromtxt(directorydata + 'train_periodaccuracy_ClassCentury_ANNv3_%s_%s.txt' % (dataset,reg_name),
               unpack=True).transpose()
-testacc = np.genfromtxt(directorydata + 'test_totalaccuracy_ClassCentury_ANNv3_%s.txt' % dataset,
+testacc = np.genfromtxt(directorydata + 'test_totalaccuracy_ClassCentury_ANNv3_%s_%s.txt' % (dataset,reg_name),
               unpack=True).transpose()
-testper = np.genfromtxt(directorydata + 'test_periodaccuracy_ClassCentury_ANNv3_%s.txt' % dataset,
+testper = np.genfromtxt(directorydata + 'test_periodaccuracy_ClassCentury_ANNv3_%s_%s.txt' % (dataset,reg_name),
               unpack=True).transpose()
 
 # ### Read in multi-decade data
@@ -109,7 +109,7 @@ plt.text(0.,0.01,r'\textbf{1920-2009}',fontsize=10,color='dimgrey',
 plt.text(1.,0.01,r'\textbf{2010-2099}',fontsize=10,color='dimgrey',
          ha='right',va='center')
 
-plt.savefig(directoryfigure + 'ClassCentury_Accuracy_PointPlots_ANNv3_%s.png' % dataset,
+plt.savefig(directoryfigure + 'ClassCentury_Accuracy_PointPlots_ANNv3_%s_%s.png' % (dataset,reg_name),
             dpi=300)
 
 # ###############################################################################  

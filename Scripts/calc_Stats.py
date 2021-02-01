@@ -85,7 +85,7 @@ def remove_ensemble_mean(data):
 
 ###############################################################################
 
-def remove_ocean(data, data_obs):
+def remove_ocean(data,data_obs,lat_bounds,lon_bounds):
     """
     Masks out the ocean for land_only == True
     """
@@ -93,13 +93,18 @@ def remove_ocean(data, data_obs):
     ### Import modules
     import numpy as np
     from netCDF4 import Dataset
+    import calc_dataFunctions as df
     
     ### Read in land mask
     directorydata = '/Users/zlabe/Data/masks/'
     filename = 'lsmask_19x25.nc'
     datafile = Dataset(directorydata + filename)
-    mask = datafile.variables['nmask'][:]
+    maskq = datafile.variables['nmask'][:]
+    lats = datafile.variables['latitude'][:]
+    lons = datafile.variables['longitude'][:]
     datafile.close()
+    
+    mask,lats,lons = df.getRegion(maskq,lats,lons,lat_bounds,lon_bounds)
     
     ### Mask out model and observations
     datamask = data * mask
@@ -109,7 +114,7 @@ def remove_ocean(data, data_obs):
 
 ###############################################################################
 
-def remove_land(data, data_obs):
+def remove_land(data,data_obs,lat_bounds,lon_bounds):
     """
     Masks out the ocean for ocean_only == True
     """
@@ -117,13 +122,18 @@ def remove_land(data, data_obs):
     ### Import modules
     import numpy as np
     from netCDF4 import Dataset
+    import calc_dataFunctions as df
     
     ### Read in ocean mask
     directorydata = '/Users/zlabe/Data/masks/'
     filename = 'ocmask_19x25.nc'
     datafile = Dataset(directorydata + filename)
-    mask = datafile.variables['nmask'][:]
+    maskq = datafile.variables['nmask'][:]
+    lats = datafile.variables['latitude'][:]
+    lons = datafile.variables['longitude'][:]
     datafile.close()
+    
+    mask,lats,lons = df.getRegion(maskq,lats,lons,lat_bounds,lon_bounds)
     
     ### Mask out model and observations
     datamask = data * mask

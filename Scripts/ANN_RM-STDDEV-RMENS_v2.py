@@ -4,7 +4,7 @@ mean removed to understand internal variability
 
 Reference  : Barnes et al. [2020, JAMES]
 Author    : Zachary M. Labe
-Date      : 20 January 2021
+Date      : 1 February 2021
 """
 
 ### Import packages
@@ -79,14 +79,14 @@ for sis,singlesimulation in enumerate(datasetsingle):
         ###############################################################################
         ###############################################################################
         ### ANN preliminaries
-        variq = 'SLP'
+        variq = 'T2M'
         monthlychoice = seasons[seas]
-        reg_name = 'Globe'
+        reg_name = 'noPolarOceans'
         if reg_name == 'Globe':
             if datasetsingle[0] == 'MPI':
                 reg_name = 'MPIGlobe'
         lat_bounds,lon_bounds = UT.regions(reg_name)
-        directoryfigure = '/Users/zlabe/Desktop/ExtremeEvents_v1_STD-RMENS/%s/' % simuqq
+        directoryfigure = '/Users/zlabe/Desktop/ExtremeEvents_v2_STD-RMENS/%s/' % simuqq
         experiment_result = pd.DataFrame(columns=['actual iters','hiddens','cascade',
                                                   'RMSE Train','RMSE Test',
                                                   'ridge penalty','zero mean',
@@ -113,32 +113,32 @@ for sis,singlesimulation in enumerate(datasetsingle):
         ### Feed the standard deviation ##########
         rm_standard_dev = True
         if rm_standard_dev == True:
-            directoryfigure = '/Users/zlabe/Desktop/ExtremeEvents_v1_STD-RMENS/%s/' % simuqq
+            directoryfigure = '/Users/zlabe/Desktop/ExtremeEvents_v2_STD-RMENS/%s/' % simuqq
         
         ### Remove the annual mean? True to subtract it from dataset ##########
         rm_annual_mean = False #################################################
         if rm_annual_mean == True:
-            directoryfigure = '/Users/zlabe/Desktop/ExtremeEvents_v1_STD-RMENS/%s/' % simuqq
+            directoryfigure = '/Users/zlabe/Desktop/ExtremeEvents_v2_STD-RMENS/%s/' % simuqq
         
         ### Remove the meridional mean? True to subtract it from dataset ######
         rm_merid_mean = False #################################################
         if rm_merid_mean == True:
-            directoryfigure = '/Users/zlabe/Desktop/ExtremeEvents_v1_STD-RMENS/%s/' % simuqq
+            directoryfigure = '/Users/zlabe/Desktop/ExtremeEvents_v2_STD-RMENS/%s/' % simuqq
         
         ### Calculate only over land? True if land ############################
-        land_only = False ######################################################
+        land_only = True ######################################################
         if land_only == True:
-            directoryfigure = '/Users/zlabe/Desktop/ExtremeEvents_v1_STD-RMENS/%s/' % simuqq
+            directoryfigure = '/Users/zlabe/Desktop/ExtremeEvents_v2_STD-RMENS/%s/' % simuqq
         
         ### Calculate only over ocean? True if ocean ##########################
         ocean_only = False #####################################################
         if ocean_only == True:
-            directoryfigure = '/Users/zlabe/Desktop/ExtremeEvents_v1_STD-RMENS/%s/' % simuqq
+            directoryfigure = '/Users/zlabe/Desktop/ExtremeEvents_v2_STD-RMENS/%s/' % simuqq
         
         ### Rove the ensemble mean? True to subtract it from dataset ##########
         rm_ensemble_mean = True ###############################################
         if rm_ensemble_mean == True:
-            directoryfigure = '/Users/zlabe/Desktop/ExtremeEvents_v1_STD-RMENS/%s/' % simuqq
+            directoryfigure = '/Users/zlabe/Desktop/ExtremeEvents_v2_STD-RMENS/%s/' % simuqq
         
         ### Split the data into training and testing sets? value of 1 will use all 
         ### data as training, .8 will use 80% training, 20% testing; etc.
@@ -964,10 +964,10 @@ for sis,singlesimulation in enumerate(datasetsingle):
                         print('*Removed standard deviation*')
         
                     if land_only == True:
-                        data, data_obs = dSS.remove_ocean(data,data_obs) 
+                        data, data_obs = dSS.remove_ocean(data,data_obs,lat_bounds,lon_bounds) 
 
                     if ocean_only == True:
-                        data, data_obs = dSS.remove_land(data,data_obs) 
+                        data, data_obs = dSS.remove_land(data,data_obs,lat_bounds,lon_bounds) 
         
                     for ih in np.arange(0,len(hiddensList)):
                         hiddens = [hiddensList[ih]]

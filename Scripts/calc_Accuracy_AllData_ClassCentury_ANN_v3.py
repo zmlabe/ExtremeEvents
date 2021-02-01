@@ -1,8 +1,8 @@
 """
-Script calculates accuracy of multi-decadal ANNv1
+Script calculates accuracy of multi-decadal ANNv3
 
 Author    : Zachary M. Labe
-Date      : 19 January 2021
+Date      : 28 January 2021
 """
 
 ### Import modules
