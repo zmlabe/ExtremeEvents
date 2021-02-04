@@ -56,8 +56,11 @@ def deepTaylorAnalysis(model,XXt,YYt,biasBool,annType,classChunk,startYear):
     ### Create the innvestigate analyzer instance for each sample
     if(annType=='class'):
         model_nosoftmax = innvestigate.utils.model_wo_softmax(model)
-    analyzer = innvestigate.analyzer.relevance_based.relevance_analyzer.LRPAlphaBeta(
-                                model_nosoftmax,alpha=1,beta=0,bias=biasBool)
+    # analyzer = innvestigate.analyzer.relevance_based.relevance_analyzer.LRPAlphaBeta(
+    #                             model_nosoftmax,alpha=1,beta=0,bias=biasBool)
+    analyzer = innvestigate.analyzer.relevance_based.relevance_analyzer.LRPZ(model_nosoftmax)
+    # analyzer = innvestigate.analyzer.relevance_based.relevance_analyzer.LRPEpsilon(model_nosoftmax, 
+    #                                                                                epsilon=1e-07, bias=biasBool)
 
     deepTaylorMaps = np.empty(np.shape(XXt))
     deepTaylorMaps[:] = np.nan

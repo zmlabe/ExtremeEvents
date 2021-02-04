@@ -930,7 +930,7 @@ def regions(name):
         lat_bounds = (-88.,88.)
         lon_bounds = (0., 360.)
     elif name == 'GlobeNoSP':
-        lat_bounds = (-66.,90.)
+        lat_bounds = (-64.,90.)
         lon_bounds = (0., 360.)
     elif name == 'GlobeNoPoles':
         lat_bounds = (-66.,66.)

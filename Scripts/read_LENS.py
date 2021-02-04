@@ -190,13 +190,13 @@ def read_LENS(directory,vari,sliceperiod,slicebase,sliceshape,addclimo,slicenan,
     elif sliceperiod == 'none':
         if sliceshape == 1:
             ensshape = ensvalue.ravel()
-        elif sliceshape == 3:
-            ensshape= np.reshape(ensvalue,(ensvalue.shape[0]*ensvalue.shape[1],
-                                             ensvalue.shape[2],ensvalue.shape[3]))
+        elif sliceshape == 4:
+            ensshape= np.reshape(ensvalue,(ensvalue.shape[0],ensvalue.shape[1]*ensvalue.shape[2],
+                                             ensvalue.shape[3],ensvalue.shape[4]))
         elif sliceshape == 5:
             ensshape = ensvalue
         print('Shape of output =', ensshape.shape, [[ensshape.ndim]])
-        print('Completed: ALL MONTHS!')
+        print('Completed: ALL RAVELED MONTHS!')
 
     ###########################################################################
     ### Change missing values
@@ -233,7 +233,10 @@ def read_LENS(directory,vari,sliceperiod,slicebase,sliceshape,addclimo,slicenan,
     ###########################################################################
     ### Edit the number of years (1920-2099) for my ANN study
     if sliceshape == 4:
-        ensshapeyr = ensshape[:,:-1,:,:]
+        if sliceperiod == 'none':
+            ensshapeyr = ensshape[:,:-12,:,:]
+        else:
+            ensshapeyr = ensshape[:,:-1,:,:]
         print('NEW Shape of output =', ensshapeyr.shape, [[ensshape.ndim]])
     else:
         print(ValueError('PROBLEM WITH NUMBER OF YEARS OR ARRAY SIZE!!!'))
@@ -246,7 +249,7 @@ def read_LENS(directory,vari,sliceperiod,slicebase,sliceshape,addclimo,slicenan,
 # import calc_Utilities as UT
 # directory = '/Users/zlabe/Data/LENS/monthly/'
 # vari = 'T2M'
-# sliceperiod = 'annual'
+# sliceperiod = 'none'
 # slicebase = np.arange(1951,1980+1,1)
 # sliceshape = 4
 # slicenan = 'nan'

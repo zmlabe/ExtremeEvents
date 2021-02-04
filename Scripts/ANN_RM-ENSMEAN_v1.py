@@ -55,12 +55,12 @@ directorydataLLL = '/Users/zlabe/Data/LENS/monthly'
 directorydataENS = '/Users/zlabe/Data/SMILE/'
 directorydataBB = '/Users/zlabe/Data/BEST/'
 directorydataEE = '/Users/zlabe/Data/ERA5/'
-datasetsingle = ['MPI']
+datasetsingle = ['lens']
 seasons = ['annual']
 
 if datasetsingle[0] == 'lens':
     simuqq = 'LENS'
-    timelens = np.arange(1920,2100+1,1)
+    timelens = np.arange(1920,2099+1,1)
     yearsall = [timelens]
     directoriesall = [directorydataLLL]
 elif datasetsingle[0] == 'MPI':

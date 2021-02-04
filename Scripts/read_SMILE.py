@@ -224,13 +224,13 @@ def read_SMILE(directory,simulation,vari,sliceperiod,slicebase,sliceshape,addcli
     elif sliceperiod == 'none':
         if sliceshape == 1:
             ensshape = ensvalue.ravel()
-        elif sliceshape == 3:
-            ensshape= np.reshape(ensvalue,(ensvalue.shape[0]*ensvalue.shape[1],
-                                             ensvalue.shape[2],ensvalue.shape[3]))
+        elif sliceshape == 4:
+            ensshape= np.reshape(ensvalue,(ensvalue.shape[0],ensvalue.shape[1]*ensvalue.shape[2],
+                                             ensvalue.shape[3],ensvalue.shape[4]))
         elif sliceshape == 5:
             ensshape = ensvalue
         print('Shape of output =', ensshape.shape, [[ensshape.ndim]])
-        print('Completed: ALL MONTHS!')
+        print('Completed: ALL RAVELED MONTHS!')
         
     ###########################################################################
     ### Change missing values
@@ -269,7 +269,10 @@ def read_SMILE(directory,simulation,vari,sliceperiod,slicebase,sliceshape,addcli
     ###########################################################################
     ### Change years
     if simulation == 'MPI':
-        ensshaper = ensshape[:,70:,:,:] # 1920-2099
+        if sliceperiod == 'none':
+            ensshaper = ensshape[:,70*12:,:,:] # 1920-2099
+        else:
+            ensshaper = ensshape[:,70:,:,:] # 1920-2099
         print('[**HARD CODE**: Shape of output =', ensshaper.shape, [[ensshaper.ndim]])
     else:
         ensshaper = ensshape
@@ -277,19 +280,19 @@ def read_SMILE(directory,simulation,vari,sliceperiod,slicebase,sliceshape,addcli
     return lat1,lon1,ensshaper,ENSmean
         
 
-### Test functions - do not use!
-import numpy as np
-import matplotlib.pyplot as plt
-import calc_Utilities as UT
-directory = '/Users/zlabe/Data/SMILE/'
-simulation = 'MPI'
-vari = 'T2M'
-sliceperiod = 'annual'
-slicebase = np.arange(1951,1980+1,1)
-sliceshape = 4
-slicenan = 'nan'
-addclimo = True
-takeEnsMean = False
-lat,lon,var,ENSmean = read_SMILE(directory,simulation,vari,sliceperiod,
-                                        slicebase,sliceshape,addclimo,
-                                        slicenan,takeEnsMean)
+# ### Test functions - do not use!
+# import numpy as np
+# import matplotlib.pyplot as plt
+# import calc_Utilities as UT
+# directory = '/Users/zlabe/Data/SMILE/'
+# simulation = 'MPI'
+# vari = 'T2M'
+# sliceperiod = 'none'
+# slicebase = np.arange(1951,1980+1,1)
+# sliceshape = 4
+# slicenan = 'nan'
+# addclimo = True
+# takeEnsMean = False
+# lat,lon,var,ENSmean = read_SMILE(directory,simulation,vari,sliceperiod,
+#                                         slicebase,sliceshape,addclimo,
+#                                         slicenan,takeEnsMean)

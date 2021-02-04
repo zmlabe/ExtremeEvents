@@ -193,7 +193,7 @@ def read_20CRv3_monthly(variq,directory,sliceperiod,sliceyear,sliceshape,addclim
     print('>>>>>>>>>> ENDING read_20CRv3_monthly function!')
     return lat1,lon1,varshape
 
-### Test functions - do not use!
+# ### Test functions - do not use!
 # import numpy as np
 # import matplotlib.pyplot as plt
 # import calc_Utilities as UT

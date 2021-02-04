@@ -1,10 +1,10 @@
 """
 Try sample code to classify the data into 2 century-scale periods with the
-ensemble mean removed
+ensemble mean removed and rolling standard deviation on monthly data
 
 Reference  : Barnes et al. [2020, JAMES]
 Author    : Zachary M. Labe
-Date      : 13 January 2021
+Date      : 3 February 2021
 """
 
 ### Import packages
@@ -23,7 +23,6 @@ import tensorflow as tf
 import pandas as pd
 import random
 import scipy.stats as stats
-from mpl_toolkits.basemap import Basemap, addcyclic, shiftgrid
 import palettable.cubehelix as cm
 import cmocean as cmocean
 import calc_Utilities as UT
@@ -55,8 +54,9 @@ directorydataLLL = '/Users/zlabe/Data/LENS/monthly'
 directorydataENS = '/Users/zlabe/Data/SMILE/'
 directorydataBB = '/Users/zlabe/Data/BEST/'
 directorydataEE = '/Users/zlabe/Data/ERA5/'
-directoryoutput = '/Users/zlabe/Documents/Research/ExtremeEvents/Data/Class-STDDEV/'
-land_only = True
+directoryoutput = '/Users/zlabe/Documents/Research/ExtremeEvents/Data/Class-STDDEV-Monthly/'
+nomonths = 12
+land_only = False
 ocean_only = False
 rm_merid_mean = False
 rm_annual_mean = False
@@ -64,33 +64,33 @@ rm_ensemble_mean = True
 rm_standard_dev = True
 ensnum = 40
 num_of_class = 2
-window = 5
+window = 5 * nomonths
 datasetsingle = ['lens']
-seasons = ['annual']
-variq = 'T2M'
-reg_name = 'GlobeNoSP'
+seasons = ['none']
+variq = 'SLP'
+reg_name = 'Globe'
 
 if datasetsingle[0] == 'lens':
     simuqq = 'LENS'
-    timelens = np.arange(1920+window,2099+1,1)
+    timelens = np.arange(1920+window//nomonths,2099+1,1)
     yearsall = [timelens]
     directoriesall = [directorydataLLL]
 elif datasetsingle[0] == 'MPI':
     simuqq = datasetsingle[0]
-    timempi = np.arange(1920+window,2099+1,1)
+    timempi = np.arange(1920+window//nomonths,2099+1,1)
     yearsall = [timempi]
     directoriesall = [directorydataENS]
     
-### Create sample class labels for 1920-2099
+### Create sample class labels for 1920-2099 monthly data
 if num_of_class == 3:
-    yearlabels = np.arange(1920+window,2099+1,1)
+    yearlabels = np.repeat(np.arange(1920+window//nomonths,2099+1,1),12)
     lengthlabels = yearlabels.shape[0]//num_of_class
     array1 = np.asarray([0]*lengthlabels)
     array2 = np.asarray([1]*lengthlabels)
     array3 = np.asarray([2]*lengthlabels)
     classesl = np.concatenate([array1,array2,array3],axis=None)
 elif num_of_class == 2:
-    yearlabels = np.arange(1920+window,2099+1,1)
+    yearlabels = np.repeat(np.arange(1920+window//nomonths,2099+1,1),12)
     lengthlabels = yearlabels.shape[0]//num_of_class
     array1 = np.asarray([0]*lengthlabels)
     array2 = np.asarray([1]*(yearlabels.shape[0]-lengthlabels))
@@ -123,23 +123,23 @@ for sis,singlesimulation in enumerate(datasetsingle):
         test_on_obs = True
         dataset_obs = '20CRv3'
         if dataset_obs == '20CRv3':
-            year_obsall = np.arange(yearsall[sis].min(),2015+1,1)
+            year_obsall = np.repeat(np.arange(yearsall[sis].min(),2015+1,1),12)
         elif dataset_obs == 'ERA5':
-            year_obsall = np.arange(1979,2019+1,1)
+            year_obsall = np.repeat(np.arange(1979,2019+1,1),12)
         if monthlychoice == 'DJF':
             obsyearstart = year_obsall.min()+1
-            year_obs = year_obsall[1:]
+            year_obs = year_obsall[12:]
         else:
             obsyearstart = year_obsall.min()
             year_obs = year_obsall
         
         ### Remove the annual mean? True to subtract it from dataset ##########
         if rm_annual_mean == True:
-            directoryfigure = '/Users/zlabe/Desktop/ExtremeEvents_v2_STD-RMENS/CLASS/%s/' % simuqq
+            directoryfigure = '/Users/zlabe/Desktop/ExtremeEvents_v2_STD-RMENS/CLASS-Monthly/%s/' % simuqq
         
         ### Rove the ensemble mean? True to subtract it from dataset ##########
         if rm_ensemble_mean == True:
-            directoryfigure = '/Users/zlabe/Desktop/ExtremeEvents_v2_STD-RMENS/CLASS/%s/' % simuqq
+            directoryfigure = '/Users/zlabe/Desktop/ExtremeEvents_v2_STD-RMENS/CLASS-Monthly/%s/' % simuqq
         
         ### Split the data into training and testing sets? value of 1 will use all 
         ### data as training, .8 will use 80% training, 20% testing; etc.
@@ -181,10 +181,10 @@ for sis,singlesimulation in enumerate(datasetsingle):
                                                     lat_bounds,lon_bounds)
             if dataset_obs == '20CRv3':
                 if monthlychoice == 'DJF':
-                    year20cr = np.arange(1837,2015+1)
+                    year20cr = np.repeat(np.arange(1837,2015+1),12)
                 else:
-                     year20cr = np.arange(1836,2015+1)
-                year_obsall = np.arange(yearsall[sis].min(),yearsall[sis].max()+1,1)
+                    year20cr = np.repeat(np.arange(1836,2015+1),12)
+                year_obsall = np.repeat(np.arange(yearsall[sis].min(),yearsall[sis].max()+1,1),12)
                 yearqq = np.where((year20cr >= year_obsall.min()) & (year20cr <= year_obsall.max()))[0]
                 data_obs = data_obs[yearqq,:,:]
             
@@ -627,10 +627,10 @@ for sis,singlesimulation in enumerate(datasetsingle):
         plt.plot(meane)
         obsout = np.reshape(YpredObs,(year_obsall.shape[0],num_of_class))
         
-        # ## Save the output for plotting
-        np.savetxt(directoryoutput + 'training_STDDEVCentury%syrs_%s_%s_%s_%s_iterations%s_land_only-%s_v1.txt' % (window,variq,monthlychoice,reg_name,dataset,iterations[0],land_only),YpredTrain)
-        np.savetxt(directoryoutput + 'testing_STDDEVCentury%syrs_%s_%s_%s_%s_iterations%s_land_only-%s_v1.txt' % (window,variq,monthlychoice,reg_name,dataset,iterations[0],land_only),YpredTest)
-        np.savetxt(directoryoutput + 'obsout_STDDEVCentury%syrs_%s_%s_%s_%s-%s_iterations%s_land_only-%s_v1.txt' % (window,variq,monthlychoice,reg_name,dataset_obs,dataset,iterations[0],land_only),YpredObs)
+        # ### Save the output for plotting
+        np.savetxt(directoryoutput + 'training_STDDEVCentury-Monthly%syrs_%s_%s_%s_%s_iterations%s_land_only-%s_v1.txt' % (window,variq,monthlychoice,reg_name,dataset,iterations[0],land_only),YpredTrain)
+        np.savetxt(directoryoutput + 'testing_STDDEVCentury-Monthly%syrs_%s_%s_%s_%s_iterations%s_land_only-%s_v1.txt' % (window,variq,monthlychoice,reg_name,dataset,iterations[0],land_only),YpredTest)
+        np.savetxt(directoryoutput + 'obsout_STDDEVCentury-Monthly%syrs_%s_%s_%s_%s-%s_iterations%s_land_only-%s_v1.txt' % (window,variq,monthlychoice,reg_name,dataset_obs,dataset,iterations[0],land_only),YpredObs)
     
         ### See more more details
         model.layers[0].get_config()
@@ -681,29 +681,29 @@ for sis,singlesimulation in enumerate(datasetsingle):
         
         biasBool = False
         
-        model_nosoftmax = innvestigate.utils.model_wo_softmax(model)
-        analyzer10 = innvestigate.analyzer.relevance_based.relevance_analyzer.LRPAlphaBeta(model_nosoftmax, 
-                                                                                            alpha=1,beta=0,bias=biasBool)
+        # model_nosoftmax = innvestigate.utils.model_wo_softmax(model)
+        # analyzer10 = innvestigate.analyzer.relevance_based.relevance_analyzer.LRPAlphaBeta(model_nosoftmax, 
+        #                                                                                     alpha=1,beta=0,bias=biasBool)
                                                                                            
-        analyzer_output = analyzer10.analyze(XobsS)
-        analyzer_output = analyzer_output/np.nansum(analyzer_output,axis=1)[:,np.newaxis]  
-        lrpobservations = np.reshape(analyzer_output,(96-window,lats.shape[0],lons.shape[0]))
+        # analyzer_output = analyzer10.analyze(XobsS)
+        # analyzer_output = analyzer_output/np.nansum(analyzer_output,axis=1)[:,np.newaxis]  
+        # lrpobservations = np.reshape(analyzer_output,(96-window,lats.shape[0],lons.shape[0]))
            
         numLats = lats.shape[0]
         numLons = lons.shape[0]   
-        lrptrain = np.reshape(summaryDTTrain,(summaryDTTrain.shape[0],yearsall[sis].shape[0],numLats,numLons))*1000
-        lrptest = np.reshape(summaryDTTest,(summaryDTTest.shape[0],yearsall[sis].shape[0],numLats,numLons))*1000
+        lrptrain = np.reshape(summaryDTTrain,(summaryDTTrain.shape[0],yearsall[sis].shape[0]*nomonths,numLats,numLons))*1000
+        lrptest = np.reshape(summaryDTTest,(summaryDTTest.shape[0],yearsall[sis].shape[0]*nomonths,numLats,numLons))*1000
         
         ##############################################################################
         ##############################################################################
         ##############################################################################
-        def netcdfLRP(lats,lons,var,directory,window,typemodel,variq,simuqq,land_only,reg_name):
+        def netcdfLRP(lats,lons,var,directory,window,typemodel,monthlychoice,variq,simuqq,land_only,reg_name):
             print('\n>>> Using netcdfLRP function!')
             
             from netCDF4 import Dataset
             import numpy as np
             
-            name = 'LRP_Maps-STDDEV%syrs_%s_Annual_%s_%s_land_only-%s_%s.nc' % (window,typemodel,variq,simuqq,land_only,reg_name)
+            name = 'LRP_Maps-STDDEV-Monthly%syrs_%s_%s_%s_%s_land_only-%s_%s.nc' % (window,typemodel,monthlychoice,variq,simuqq,land_only,reg_name)
             filename = directory + name
             ncfile = Dataset(filename,'w',format='NETCDF4')
             ncfile.description = 'LRP maps for using selected seed' 
@@ -737,8 +737,8 @@ for sis,singlesimulation in enumerate(datasetsingle):
             ncfile.close()
             print('*Completed: Created netCDF4 File!')
             
-        netcdfLRP(lats,lons,lrptrain,directoryoutput,window,'train',variq,simuqq,land_only,reg_name)
-        netcdfLRP(lats,lons,lrptest,directoryoutput,window,'test',variq,simuqq,land_only,reg_name)
+        netcdfLRP(lats,lons,lrptrain,directoryoutput,window,'train',monthlychoice,variq,simuqq,land_only,reg_name)
+        netcdfLRP(lats,lons,lrptest,directoryoutput,window,'test',monthlychoice,variq,simuqq,land_only,reg_name)
       
     ### Delete memory!!!
     if sis < len(datasetsingle):

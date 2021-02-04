@@ -19,7 +19,7 @@ def deepTaylorAnalysis(model,XXt,YYt,biasBool,annType,num_of_class,yearlabels):
     """
     Calculate Deep Taylor for LRP
     """
-    print('<<<< Started deepTaylorAnalysis() >>>>')
+    print('<<<< Started LRPZrule() >>>>')
     
     ### Import modules
     import numpy as np 
@@ -33,6 +33,9 @@ def deepTaylorAnalysis(model,XXt,YYt,biasBool,annType,num_of_class,yearlabels):
         model_nosoftmax = innvestigate.utils.model_wo_softmax(model)
     analyzer = innvestigate.analyzer.relevance_based.relevance_analyzer.LRPAlphaBeta(
                                 model_nosoftmax,alpha=1,beta=0,bias=biasBool)
+    # analyzer = innvestigate.analyzer.relevance_based.relevance_analyzer.LRPZ(model_nosoftmax)
+    # analyzer = innvestigate.analyzer.relevance_based.relevance_analyzer.LRPEpsilon(model_nosoftmax, 
+    #                                                                                epsilon=1e-07, bias=biasBool)
 
     deepTaylorMaps = np.empty(np.shape(XXt))
     deepTaylorMaps[:] = np.nan
@@ -43,7 +46,7 @@ def deepTaylorAnalysis(model,XXt,YYt,biasBool,annType,num_of_class,yearlabels):
         analyzer_output = analyzer.analyze(sample[np.newaxis,...])
         deepTaylorMaps[i] = analyzer_output/np.sum(analyzer_output.flatten())
 
-    print('done with Deep Taylor analyzer normalization')     
+    print('done with analyzer normalization')     
     
     ###########################################################################
     ###########################################################################
@@ -55,5 +58,5 @@ def deepTaylorAnalysis(model,XXt,YYt,biasBool,annType,num_of_class,yearlabels):
                                             len(yearlabels),deepTaylorMaps.shape[1]))
     # summaryDT = np.nanmean(summaryDTq,axis=0)
     
-    print('<<<< Completed deepTaylorAnalysis() >>>>')    
+    print('<<<< Completed LRPZrule() >>>>')    
     return(summaryDTq)
