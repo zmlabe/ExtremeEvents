@@ -926,11 +926,11 @@ def regions(name):
     if name == 'Globe':
         lat_bounds = (-90.,90.)
         lon_bounds = (0., 360.)
-    elif name == 'MPIGlobe':
-        lat_bounds = (-88.,88.)
+    elif name == 'SMILEGlobe':
+        lat_bounds = (-89.,89.)
         lon_bounds = (0., 360.)
     elif name == 'GlobeNoSP':
-        lat_bounds = (-64.,90.)
+        lat_bounds = (-64.,89.)
         lon_bounds = (0., 360.)
     elif name == 'GlobeNoPoles':
         lat_bounds = (-66.,66.)
@@ -939,10 +939,10 @@ def regions(name):
         lat_bounds = (-53.,66.)
         lon_bounds = (0., 360.)
     elif name == 'NH':
-        lat_bounds = (0.,90.)
+        lat_bounds = (0.,89.)
         lon_bounds = (0., 360.)
     elif name == 'SH':
-        lat_bounds = (-90.,0.)
+        lat_bounds = (-89.,0.)
         lon_bounds = (0., 360.)
     elif name == 'Tropics':
         lat_bounds = (-30., 30.)
@@ -954,28 +954,28 @@ def regions(name):
         lat_bounds = (-50., 50.)
         lon_bounds = (0., 360.)  
     elif name == 'wideNH':
-        lat_bounds = (20., 90.)
+        lat_bounds = (20., 89.)
         lon_bounds = (0., 360.)  
     elif name == 'wideSH':
-        lat_bounds = (-90., -20.)
+        lat_bounds = (-89., -20.)
         lon_bounds = (0., 360.)  
     elif name == 'Arctic':
-        lat_bounds = (65.,90.)
+        lat_bounds = (65.,89.)
         lon_bounds = (0., 360.)  
     elif name == 'LowerArctic':
-        lat_bounds = (60.,90.)
+        lat_bounds = (60.,89.)
         lon_bounds = (0., 360.)  
     elif name == 'VortexNorth':
-        lat_bounds = (50.,90.)
+        lat_bounds = (50.,89.)
         lon_bounds = (0., 360.)  
     elif name == 'VortexSouth':
         lat_bounds = (-90.,-50.)
         lon_bounds = (0., 360.)  
     elif name == 'Antarctic':
-        lat_bounds = (-90.,-65.)
+        lat_bounds = (-89.,-65.)
         lon_bounds = (0., 360.) 
     elif name == 'LowerAntarctic':
-        lat_bounds = (-90.,-60.)
+        lat_bounds = (-89.,-60.)
         lon_bounds = (0., 360.)  
     elif name == 'NHExtra':
         lat_bounds = (30.,65.)
@@ -996,7 +996,7 @@ def regions(name):
         lat_bounds = (24, 60)
         lon_bounds = (235, 290)
     elif name == 'NAext':
-        lat_bounds = (25, 90)
+        lat_bounds = (25, 89)
         lon_bounds = (200,330)         
     elif name == 'NAprop':
         lat_bounds = (10, 80)

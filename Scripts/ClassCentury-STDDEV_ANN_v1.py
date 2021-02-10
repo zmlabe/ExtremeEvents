@@ -50,37 +50,68 @@ plt.rc('font',**{'family':'sans-serif','sans-serif':['Avant Garde']})
 ###############################################################################
 ###############################################################################
 ###############################################################################
-### Data preliminaries 
+### Data preliminaries ########
 directorydataLLL = '/Users/zlabe/Data/LENS/monthly'
 directorydataENS = '/Users/zlabe/Data/SMILE/'
 directorydataBB = '/Users/zlabe/Data/BEST/'
 directorydataEE = '/Users/zlabe/Data/ERA5/'
 directoryoutput = '/Users/zlabe/Documents/Research/ExtremeEvents/Data/Class-STDDEV/'
+modelGCMs = ['lens','MPI','CSIRO_MK3.6','KNMI_ecearth']
+###############################
+###############################
 land_only = True
 ocean_only = False
 rm_merid_mean = False
 rm_annual_mean = False
 rm_ensemble_mean = True
 rm_standard_dev = True
-ensnum = 40
+###############################
+###############################
 num_of_class = 2
 window = 5
+###############################
+###############################
 datasetsingle = ['lens']
-seasons = ['annual']
 variq = 'T2M'
-reg_name = 'GlobeNoSP'
+###############################
+###############################
+seasons = ['JFM','AMJ','JAS','OND']
+reg_name = 'wideNH'
+###############################
+###############################
+lrpRule = 'z'
+normLRP = True
+###############################
+###############################
 
+###############################
+### Set model defauls
 if datasetsingle[0] == 'lens':
     simuqq = 'LENS'
+    ensnum = 40
     timelens = np.arange(1920+window,2099+1,1)
     yearsall = [timelens]
     directoriesall = [directorydataLLL]
 elif datasetsingle[0] == 'MPI':
     simuqq = datasetsingle[0]
+    ensnum = 40
     timempi = np.arange(1920+window,2099+1,1)
     yearsall = [timempi]
     directoriesall = [directorydataENS]
-    
+elif datasetsingle[0] == 'CSIRO_MK3.6':
+    simuqq = datasetsingle[0]
+    ensnum = 30
+    timecsiro= np.arange(1920+window,2099+1,1)
+    yearsall = [timecsiro]
+    directoriesall = [directorydataENS]
+elif datasetsingle[0] == 'KNMI_ecearth':
+    simuqq = datasetsingle[0]
+    ensnum = 16
+    timeknmi = np.arange(1920+window,2099+1,1)
+    yearsall = [timeknmi]
+    directoriesall = [directorydataENS]
+
+###############################    
 ### Create sample class labels for 1920-2099
 if num_of_class == 3:
     yearlabels = np.arange(1920+window,2099+1,1)
@@ -95,19 +126,22 @@ elif num_of_class == 2:
     array1 = np.asarray([0]*lengthlabels)
     array2 = np.asarray([1]*(yearlabels.shape[0]-lengthlabels))
     classesl = np.concatenate([array1,array2],axis=None)
-    
+
+###############################    
 ### Begin ANN and the entire script
 for sis,singlesimulation in enumerate(datasetsingle):
     lrpsns = []
     for seas in range(len(seasons)):
-        ###############################################################################
-        ###############################################################################
-        ###############################################################################
+        #######################################################################
+        #######################################################################
+        #######################################################################
         ### ANN preliminaries
         monthlychoice = seasons[seas]
         if reg_name == 'Globe':
-            if datasetsingle[0] == 'MPI':
-                reg_name = 'MPIGlobe'
+            if any([datasetsingle[0]=='MPI',
+                    datasetsingle[0]=='CSIRO_MK3.6',
+                    datasetsingle[0]=='KNMI_ecearth']):
+                reg_name = 'SMILEGlobe'
         lat_bounds,lon_bounds = UT.regions(reg_name)
         directoryfigure = '/Users/zlabe/Desktop/ExtremeEvents_v2_STD-RMENS/CLASS/%s/' % simuqq
         experiment_result = pd.DataFrame(columns=['actual iters','hiddens','cascade',
@@ -617,11 +651,11 @@ for sis,singlesimulation in enumerate(datasetsingle):
                             YtestClassMulti = YtestClassMulti
         
         ### Get output from model
-        trainingout = np.reshape(YpredTrain,(int(ensnum*0.8),yearlabels.shape[0],num_of_class))
+        trainingout = np.reshape(YpredTrain,(int(np.ceil(ensnum*0.8)),yearlabels.shape[0],num_of_class))
         meant = np.nanmean(trainingout,axis=0)
         fig = plt.figure()
         plt.plot(meant)
-        testingout = np.reshape(YpredTest,(int(ensnum*0.2),yearlabels.shape[0],num_of_class))
+        testingout = np.reshape(YpredTest,(int(np.floor(ensnum*0.2)),yearlabels.shape[0],num_of_class))
         meane = np.nanmean(testingout,axis=0)
         fig = plt.figure()
         plt.plot(meane)
@@ -663,36 +697,31 @@ for sis,singlesimulation in enumerate(datasetsingle):
         ##############################################################################
         ##############################################################################
         ## Visualizing through LRP
-        summaryDT = LRP.deepTaylorAnalysis(model,
-                                                np.append(XtrainS,XtestS,axis=0),
+        numLats = lats.shape[0]
+        numLons = lons.shape[0]  
+        lrpall = LRP.calc_LRPModel(model,np.append(XtrainS,XtestS,axis=0),
                                                 np.append(Ytrain,Ytest,axis=0),
                                                 biasBool,annType,num_of_class,
-                                                yearlabels)
+                                                yearlabels,lrpRule,normLRP,
+                                                numLats,numLons)
         
-        # for training data only
-        summaryDTTrain = LRP.deepTaylorAnalysis(
-                                                model,XtrainS,Ytrain,biasBool,
-                                                annType,num_of_class,yearlabels)
+        ### For training data only
+        lrptrain = LRP.calc_LRPModel(model,XtrainS,Ytrain,biasBool,
+                                                annType,num_of_class,
+                                                yearlabels,lrpRule,normLRP,
+                                                numLats,numLons)
         
-        # for training data only
-        summaryDTTest = LRP.deepTaylorAnalysis(
-                                                model,XtestS,Ytest,biasBool,
-                                                annType,num_of_class,yearlabels)
+        ### For training data only
+        lrptest = LRP.calc_LRPModel(model,XtestS,Ytest,biasBool,
+                                                annType,num_of_class,
+                                                yearlabels,lrpRule,normLRP,
+                                                numLats,numLons)
         
-        biasBool = False
         
-        model_nosoftmax = innvestigate.utils.model_wo_softmax(model)
-        analyzer10 = innvestigate.analyzer.relevance_based.relevance_analyzer.LRPAlphaBeta(model_nosoftmax, 
-                                                                                            alpha=1,beta=0,bias=biasBool)
-                                                                                           
-        analyzer_output = analyzer10.analyze(XobsS)
-        analyzer_output = analyzer_output/np.nansum(analyzer_output,axis=1)[:,np.newaxis]  
-        lrpobservations = np.reshape(analyzer_output,(96-window,lats.shape[0],lons.shape[0]))
-           
-        numLats = lats.shape[0]
-        numLons = lons.shape[0]   
-        lrptrain = np.reshape(summaryDTTrain,(summaryDTTrain.shape[0],yearsall[sis].shape[0],numLats,numLons))*1000
-        lrptest = np.reshape(summaryDTTest,(summaryDTTest.shape[0],yearsall[sis].shape[0],numLats,numLons))*1000
+        ### For observations data only
+        lrpobservations = LRP.calc_LRPObs(model,XobsS,biasBool,annType,
+                                            num_of_class,yearlabels,lrpRule,
+                                            normLRP,numLats,numLons)
         
         ##############################################################################
         ##############################################################################
@@ -745,3 +774,8 @@ for sis,singlesimulation in enumerate(datasetsingle):
         del model 
         del data
         del data_obs
+        
+a=np.nanmean(lrptrain,axis=0)
+fig = plt.figure()
+plt.contourf(a[0],np.arange(0,0.51,0.01),cmap=cmocean.cm.thermal,extend='both')
+

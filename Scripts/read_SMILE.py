@@ -274,6 +274,18 @@ def read_SMILE(directory,simulation,vari,sliceperiod,slicebase,sliceshape,addcli
         else:
             ensshaper = ensshape[:,70:,:,:] # 1920-2099
         print('[**HARD CODE**: Shape of output =', ensshaper.shape, [[ensshaper.ndim]])
+    elif simulation == 'CSIRO_MK3.6':
+        if sliceperiod == 'none':
+            ensshaper = ensshape[:,70*12:-12,:,:] # 1920-2099
+        else:
+            ensshaper = ensshape[:,70:-1,:,:] # 1920-2099
+        print('[**HARD CODE**: Shape of output =', ensshaper.shape, [[ensshaper.ndim]])
+    elif simulation == 'KNMI_ecearth':
+        if sliceperiod == 'none':
+            ensshaper = ensshape[:,60*12:-12,:,:] # 1920-2099
+        else:
+            ensshaper = ensshape[:,60:-1,:,:] # 1920-2099
+        print('[**HARD CODE**: Shape of output =', ensshaper.shape, [[ensshaper.ndim]])
     else:
         ensshaper = ensshape
 
@@ -285,7 +297,7 @@ def read_SMILE(directory,simulation,vari,sliceperiod,slicebase,sliceshape,addcli
 # import matplotlib.pyplot as plt
 # import calc_Utilities as UT
 # directory = '/Users/zlabe/Data/SMILE/'
-# simulation = 'MPI'
+# simulation = 'KNMI_ecearth'
 # vari = 'T2M'
 # sliceperiod = 'none'
 # slicebase = np.arange(1951,1980+1,1)
