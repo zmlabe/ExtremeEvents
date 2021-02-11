@@ -59,7 +59,7 @@ directoryoutput = '/Users/zlabe/Documents/Research/ExtremeEvents/Data/Class-STDD
 modelGCMs = ['lens','MPI','CSIRO_MK3.6','KNMI_ecearth']
 ###############################
 ###############################
-land_only = True
+land_only = False
 ocean_only = False
 rm_merid_mean = False
 rm_annual_mean = False
@@ -76,7 +76,8 @@ variq = 'T2M'
 ###############################
 ###############################
 seasons = ['JFM','AMJ','JAS','OND']
-reg_name = 'wideNH'
+seasons = ['annual']
+reg_name = 'wideTropics'
 ###############################
 ###############################
 lrpRule = 'z'

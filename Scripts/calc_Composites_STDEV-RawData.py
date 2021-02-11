@@ -120,21 +120,21 @@ for i in range(len(datasetsingle)):
         
     ### Calculate ensemble mean
     meanstd[i,:,:] = np.nanmean(datas,axis=0)
-    maxstd[i,:,:]  = np.nanmean(datas,axis=0)
-    minstd[i,:,:]  = np.nanmean(datas,axis=0)
+    maxstd[i,:,:]  = np.nanmax(datas,axis=0)
+    minstd[i,:,:]  = np.nanmin(datas,axis=0)
     
     print('%s -- %s' % (i,datasetsingle[i]))
     
 ##############################################################################
 ##############################################################################
 ##############################################################################
-def netcdfComp(lats,lons,var,directory,window,typemodel,season,variq,simuqq,land_only,reg_name):
+def netcdfComp(lats,lons,var,directory,window,typemodel,season,variq,land_only,reg_name):
     print('\n>>> Using netcdfComp function!')
     
     from netCDF4 import Dataset
     import numpy as np
     
-    name = 'Composites_RawData_Maps-STDDEV%syrs_%s_%s_%s_%s_land_only-%s_%s.nc' % (window,typemodel,season,variq,simuqq,land_only,reg_name)
+    name = 'Composites_RawData_Maps-STDDEV%syrs_%s_%s_%s_land_only-%s_%s.nc' % (window,typemodel,season,variq,land_only,reg_name)
     filename = directory + name
     ncfile = Dataset(filename,'w',format='NETCDF4')
     ncfile.description = 'Composites of standard deviation maps' 
@@ -150,7 +150,7 @@ def netcdfComp(lats,lons,var,directory,window,typemodel,season,variq,simuqq,land
     years = ncfile.createVariable('years','f4',('years'))
     latitude = ncfile.createVariable('lat','f4',('lat'))
     longitude = ncfile.createVariable('lon','f4',('lon'))
-    varns = ncfile.createVariable('LRP','f4',('models','years','lat','lon'))
+    varns = ncfile.createVariable('stdev','f4',('models','years','lat','lon'))
     
     ### Units
     varns.units = 'degrees C'
@@ -168,7 +168,8 @@ def netcdfComp(lats,lons,var,directory,window,typemodel,season,variq,simuqq,land
     ncfile.close()
     print('*Completed: Created netCDFComp File!')
     
-netcdfComp(lats,lons,meanstd,directoryoutput,window,'meanSTD',seasons[0],variq,simuqq,land_only,reg_name)
-netcdfComp(lats,lons,maxstd,directoryoutput,window,'maxSTD',seasons[0],variq,simuqq,land_only,reg_name)
-netcdfComp(lats,lons,minstd,directoryoutput,window,'mminSTD',seasons[0],variq,simuqq,land_only,reg_name)
+netcdfComp(lats,lons,meanstd,directoryoutput,window,'meanSTD',seasons[0],variq,land_only,reg_name)
+netcdfComp(lats,lons,maxstd,directoryoutput,window,'maxSTD',seasons[0],variq,land_only,reg_name)
+netcdfComp(lats,lons,minstd,directoryoutput,window,'minSTD',seasons[0],variq,land_only,reg_name)
+netcdfComp(lats,lons,maxstd-minstd,directoryoutput,window,'spread',seasons[0],variq,land_only,reg_name)
     
